@@ -211,8 +211,32 @@ class DecisionTree:
         Then, split the data based on its value in the selected column.
         The data should be recursively passed to the children.
         '''
-
-        pass
+        is_leaf, label = self._is_terminal(node, data, indices)
+        node.label = label # set the label
+        if (is_leaf): #split node or not
+            node.isLeaf = True
+            return
+        else:
+            #calc gain for each index hypothetically split on, choose one maximizing gain
+            gains = []
+            for i in indices:
+                gains.append(self._calc_gain(data,indices[i],self.gain_function))
+            max_index = np.argmax(gains) #split on this index, remove from list
+            indices.pop(max_index) #remove index we split on
+            # not sure how to set this $
+            node._set_info(gains[max_index], len(data))
+            node.index_split_on(max_index)
+            # not sure how to set ^
+            node.left =  Node(depth=node.depth + 1, index_split_on=max_index,label=node.label()) #index of zero
+            node.right = Node(depth=node.depth + 1, index_split_on=max_index,label=node.label())
+            #index splitting on can take in either 0 or 1
+            mask1 = data[:,max_index] == 0 #mask to use on original dataset
+            left_data = data[mask1] #data for left child node
+            mask2 = data[:,max_index] == 1 #mask to use on original dataset
+            right_data = data[mask2] #data for right child node
+            # remove index you alr split on from indices list, pass in list to recursive
+            self._split_recurs(node.left,left_data,indices) #shallow copy and deep copy?
+            self._split_recurs(node.right,right_data,indices) #shallow copy and deep copy?
 
 
     def _calc_gain(self, data, split_index, gain_function):
@@ -223,6 +247,7 @@ class DecisionTree:
         Here the C(p) is the gain_function. For example, if C(p) = min(p, 1-p), this would be
         considering training error gain. Other alternatives are entropy and gini functions.
         '''
+
         pass
     
 
