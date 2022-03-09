@@ -42,27 +42,27 @@ def explore_dataset(filename, class_name):
     #      (b) Print average test loss (not-pruned)
     #      (c) Print average training loss (pruned)
     #      (d) Print average test loss (pruned)
-    decision_tree_ent = DecisionTree(train_data, validation_data=None, gain_function=node_score_entropy)
+    decision_tree_ent = DecisionTree(data=train_data, validation_data=None, gain_function=node_score_entropy)
     print(decision_tree_ent.loss(train_data)) # average training loss
     print(decision_tree_ent.loss(test_data))
 
-    p_decision_tree_ent = DecisionTree(train_data, validation_data=validation_data, gain_function=node_score_entropy)
+    p_decision_tree_ent = DecisionTree(data=train_data, validation_data=validation_data, gain_function=node_score_entropy)
     print(p_decision_tree_ent.loss(train_data)) # average training loss
     print(p_decision_tree_ent.loss(test_data))
 
-    decision_tree_train = DecisionTree(train_data, validation_data=None, gain_function=node_score_error)
+    decision_tree_train = DecisionTree(data=train_data, validation_data=None, gain_function=node_score_error)
     print(decision_tree_train.loss(train_data)) # average training loss
     print(decision_tree_train.loss(test_data))
 
-    p_decision_tree_train = DecisionTree(train_data, validation_data=validation_data, gain_function=node_score_error)
+    p_decision_tree_train = DecisionTree(data=train_data, validation_data=validation_data, gain_function=node_score_error)
     print(p_decision_tree_train.loss(train_data)) # average training loss
     print(p_decision_tree_train.loss(test_data))
 
-    decision_tree_gini = DecisionTree(train_data, validation_data=None, gain_function=node_score_gini)
+    decision_tree_gini = DecisionTree(data=train_data, validation_data=None, gain_function=node_score_gini)
     print(decision_tree_gini.loss(train_data)) # average training loss
     print(decision_tree_gini.loss(test_data))
 
-    p_decision_tree_gini = DecisionTree(train_data, validation_data=validation_data, gain_function=node_score_gini)
+    p_decision_tree_gini = DecisionTree(data=train_data, validation_data=validation_data, gain_function=node_score_gini)
     print(p_decision_tree_gini.loss(train_data)) # average training loss
     print(p_decision_tree_gini.loss(test_data))
 

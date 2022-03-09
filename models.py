@@ -137,30 +137,43 @@ class DecisionTree:
         HINT: Think about what variables need to be set when pruning a node!
         '''
         if (node.isleaf):
-            return
-        if not (node.left is None): # if it is a node
-            self._prune_recurs(node.left, validation_data) #check for nodes
-        if not (node.right is None): # if it is a node
-            self._prune_recurs(node.right, validation_data) # check for nodes
-        if (not node.isleaf and node.left.isleaf and node.right.isleaf): #if both children leaves
-            loss_before = self.loss(validation_data)
-            left_node = node.left
-            right_node = node.right
-            node.left = None
-            node.right = None
-            node.isleaf = True
-            #find label of leaf
-            # nonzero_count = np.count_nonzero(validation_data[0])
-            # zero_count = np.count_nonzero(validation_data[0] == 0)
-            # if (nonzero_count > zero_count): #if it is true
-            #     node.label = 1
-            # else:
-            #     node.label = 0
-            loss_after = self.loss(validation_data)
-            if (loss_before < loss_after): # if pruning did not minimize loss
-                node.left = left_node
-                node.right = right_node
-                node.isleaf = False
+            pass
+        else:
+            if (node.left is not None): # if it is a node
+                self._prune_recurs(node.left, validation_data) #check for nodes
+            if (node.right is not None): # if it is a node
+                self._prune_recurs(node.right, validation_data) # check for nodes
+            if (node.left.isleaf and node.right.isleaf): #if both children leaves
+                loss_before = self.loss(validation_data)
+                left_node = node.left
+                right_node = node.right
+                node.left = None
+                node.right = None
+                node.isleaf = True
+
+                #find label of leaf
+                # nonzero_count = np.count_nonzero(validation_data[0])
+                # zero_count = np.count_nonzero(validation_data[0] == 0)
+                # if (nonzero_count > zero_count): #if it is true
+                #     node.label = 1
+                # else:
+                #     node.label = 0
+
+                loss_after = self.loss(validation_data)
+                if (loss_before < loss_after): # if pruning did not minimize loss
+                    node.left = left_node
+                    node.right = right_node
+                    node.isleaf = False
+            #     loss_before = self.accuracy(validation_data)
+            #     node.isleaf = True
+            #     loss_after = self.accuracy(validation_data)
+            #     if (loss_before <= loss_after): #pruning did not minimize loss
+            #         node.left = None
+            #         node.right = None
+            #     else:
+            #         node.isleaf = False
+            # return
+
 
 
     def _is_terminal(self, node, data, indices):
