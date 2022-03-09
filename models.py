@@ -9,7 +9,7 @@ def node_score_error(prob):
         Calculate the node score using the train error of the subdataset and return it.
         For a dataset with two classes, C(p) = min{p, 1-p}
     '''
-    pass
+    return np.minimum(prob, 1-prob)
 
 
 def node_score_entropy(prob):
@@ -19,8 +19,13 @@ def node_score_entropy(prob):
         For a dataset with 2 classes, C(p) = -p * log(p) - (1-p) * log(1-p)
         For the purposes of this calculation, assume 0*log0 = 0.
         HINT: remember to consider the range of values that p can take!
+
     '''
-    pass
+    if (prob > 0) and (prob < 1):
+        left = (-prob)*np.log(prob)
+        return left - ((1-prob)*np.log(1-prob))
+    else:
+        return 0
 
 
 def node_score_gini(prob):
@@ -29,7 +34,7 @@ def node_score_gini(prob):
         Calculate the node score using the gini index of the subdataset and return it.
         For dataset with 2 classes, C(p) = 2 * p * (1-p)
     '''
-    pass
+    return (2*prob)*(1-prob)
 
 
 
@@ -131,11 +136,13 @@ class DecisionTree:
         itself (i.e. we will only prune nodes that have two leaves as children.)
         HINT: Think about what variables need to be set when pruning a node!
         '''
-        if (not node.left.isleaf) and not (node.left is None): # if it is a node
+        if (node.isleaf):
+            return
+        if not (node.left is None): # if it is a node
             self._prune_recurs(node.left, validation_data) #check for nodes
-        if (not node.right.isleaf) and not (node.right is None): # if it is a node
+        if not (node.right is None): # if it is a node
             self._prune_recurs(node.right, validation_data) # check for nodes
-        if (node.left.isleaf and node.right.isleaf): #if both children leaves
+        if (not node.isleaf and node.left.isleaf and node.right.isleaf): #if both children leaves
             loss_before = self.loss(validation_data)
             left_node = node.left
             right_node = node.right
@@ -143,12 +150,12 @@ class DecisionTree:
             node.right = None
             node.isleaf = True
             #find label of leaf
-            nonzero_count = np.count_nonzero(validation_data[0])
-            zero_count = np.count_nonzero(validation_data[0] == 0)
-            if (nonzero_count > zero_count): #if it is true
-                node.label = 1
-            else:
-                node.label = 0
+            # nonzero_count = np.count_nonzero(validation_data[0])
+            # zero_count = np.count_nonzero(validation_data[0] == 0)
+            # if (nonzero_count > zero_count): #if it is true
+            #     node.label = 1
+            # else:
+            #     node.label = 0
             loss_after = self.loss(validation_data)
             if (loss_before < loss_after): # if pruning did not minimize loss
                 node.left = left_node
@@ -221,22 +228,22 @@ class DecisionTree:
             gains = []
             for i in indices:
                 gains.append(self._calc_gain(data,indices[i],self.gain_function))
-            max_index = np.argmax(gains) #split on this index, remove from list
+            max_index = indices[np.argmax(gains)] #split on this index, remove from list
             indices.pop(max_index) #remove index we split on
             # not sure how to set this $
-            node._set_info(gains[max_index], len(data))
-            node.index_split_on(max_index)
+            node._set_info(np.max(gains), len(data))
+            node.index_split_on = max_index
             # not sure how to set ^
-            node.left =  Node(depth=node.depth + 1, index_split_on=max_index,label=node.label()) #index of zero
-            node.right = Node(depth=node.depth + 1, index_split_on=max_index,label=node.label())
+            node.left =  Node(depth=node.depth + 1) #index of zero
+            node.right = Node(depth=node.depth + 1)
             #index splitting on can take in either 0 or 1
             mask1 = data[:,max_index] == 0 #mask to use on original dataset
             left_data = data[mask1] #data for left child node
             mask2 = data[:,max_index] == 1 #mask to use on original dataset
             right_data = data[mask2] #data for right child node
             # remove index you alr split on from indices list, pass in list to recursive
-            self._split_recurs(node.left,left_data,indices) #shallow copy and deep copy?
-            self._split_recurs(node.right,right_data,indices) #shallow copy and deep copy?
+            self._split_recurs(node.left,left_data,copy.copy(indices)) #shallow copy and deep copy?
+            self._split_recurs(node.right,right_data,copy.copy(indices)) #shallow copy and deep copy?
 
 
     def _calc_gain(self, data, split_index, gain_function):
@@ -247,9 +254,34 @@ class DecisionTree:
         Here the C(p) is the gain_function. For example, if C(p) = min(p, 1-p), this would be
         considering training error gain. Other alternatives are entropy and gini functions.
         '''
+        #how to calculate probabilities?
+        #gain = gain_function(y=1) - x_i=True * gain_function()
+        nonzero_count = np.count_nonzero(data[:,0])
+        zero_count = np.count_nonzero(data[:,0] == 0)
+        # if (nonzero_count > zero_count):
+        #     val = 1
+        # else:
+        #     val = 0
+        p_one = nonzero_count / len(data)
+        p_zero = zero_count / len(data)
 
-        pass
-    
+        mask1 = data[:,split_index] == 0 #mask to use on original dataset
+        left_data = data[mask1] #data for left child node
+        mask2 = data[:,split_index] == 1 #mask to use on original dataset
+        right_data = data[mask2] #data for right child node
+
+        nonzero_count_left = np.count_nonzero(left_data[:,0])
+        nonzero_count_right = np.count_nonzero(right_data[:,0])
+
+        p_split_left = nonzero_count_left / len(data)
+        p_split_right = nonzero_count_right / len(data)
+        
+        gain_nonzero = gain_function(p_one)
+        gain_left = gain_function(p_split_left)
+        gain_right = gain_function(p_split_right)
+
+        gain = gain_nonzero - (gain_left * (len(left_data)/len(data))) + gain_right*(len(right_data)/len(data))
+        return gain    
 
     def print_tree(self):
         '''
