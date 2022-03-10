@@ -281,14 +281,14 @@ class DecisionTree:
         '''
         #how to calculate probabilities?
         #gain = gain_function(y=1) - x_i=True * gain_function()
-        nonzero_count = len(data[data[:,0] == 1])
-        zero_count = len(data[data[:,0] == 0])
+        nonzero_count = np.mean(data[:,0]) if len(data) > 0 else 0.0
+        
         # if (nonzero_count > zero_count):
         #     val = 1
         # else:
         #     val = 0
         p_one = nonzero_count / len(data)
-        p_zero = zero_count / len(data)
+        
 
         mask1 = data[:,split_index] == 0 #mask to use on original dataset
         left_data = data[mask1] #data for left child node
@@ -296,9 +296,13 @@ class DecisionTree:
         right_data = data[mask2] #data for right child node
 
    
-        nonzero_count = np.mean(data[:,0])
-        p_split_left = np.mean(left_data[:,0])
-        p_split_right = np.mean(right_data[:,0])
+        # nonzero_count = np.mean(data[:,0])
+        # p_split_left = np.mean(left_data[:,0])
+        # p_split_right = np.mean(right_data[:,0])
+
+       
+        p_split_left = np.mean(left_data[:,0]) if len(left_data) > 0 else 0.0
+        p_split_right = np.mean(right_data[:,0]) if len(right_data) > 0 else 0.0
         
         gain_nonzero = gain_function(p_one)
         gain_left = gain_function(p_split_left)

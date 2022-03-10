@@ -77,6 +77,24 @@ def explore_dataset(filename, class_name):
     plt.savefig("hw6_plots.png")
     plt.show()
 
+#for project report
+def plot_loss(filename, class_name):
+    train_data, validation_data, test_data = get_data(filename, class_name)
+    # have to go through depths
+    training_loss = []
+    max_depths = list(range(1,16)) #values between 1 and 15
+    
+    #loop through values
+    for x in range(1,16):
+        decision_tree = DecisionTree(data=train_data,validation_data=None,gain_function=node_score_entropy, max_depth=x)
+        training_loss.append(decision_tree.loss(train_data))
+    
+    plt.plot(max_depths,training_loss)
+    plt.xlabel('depth')
+    plt.xlabel('training set loss')
+    plt.title('figure 2')
+
+
 
 
 def main():
@@ -87,5 +105,8 @@ def main():
 
     explore_dataset('data/chess.csv', 'won')
     explore_dataset('data/spam.csv', '1')
+
+    ## TESTING DEPTH ##
+    plot_loss('data/spam.csv', '1')
 
 main()
