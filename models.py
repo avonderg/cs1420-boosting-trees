@@ -192,25 +192,37 @@ class DecisionTree:
               be if we were to terminate at that node). If there is no data left, you
               can return either label at random.
         '''
-        nonzero_count = np.count_nonzero(data[:,0])
-        zero_count = np.count_nonzero(data[:,0] == 0)
-        if (nonzero_count > zero_count):
-            val = 1
-        else:
-            val = 0
-        # if statements
+        # nonzero_count = len(data[data[:,0] == 1])
+        # zero_count = len(data[data[:,0] == 0])
+        # if (nonzero_count > zero_count):
+        #     val = 1
+        # else:
+        #     val = 0
+        # # if statements
+        # if (len(data)==0): #node is a leaf
+        #     return True, random.randrange(0,2)
+        # if (len(indices) == 0): #node is a leaf
+        #     return True, val
+        # if (len(data[data[:,0] == 0]) == len(data)) or (len(data[data[:,0] == 1]) == len(data)): #instances belong to same class
+        #     zero_count = len(data[data[:,0] == 0])
+        #     nonzero_count = len(data[data[:,0] == 1])
+        #     val = 0
+        #     if (zero_count == 0):
+        #         val = 0
+        #     else:
+        #         val = 1
+        #     return True, val
+        # if (node.depth == self.max_depth):
+        #     return True, val
+        # else: #not a leaf
+        #     return False, val
+
         if (len(data)==0): #node is a leaf
             return True, random.randrange(0,2)
+        val = np.mean(data[:,0]) >= 0.5
         if (len(indices) == 0): #node is a leaf
             return True, val
-        if (np.count_nonzero(data[:,0]) == 0) or (np.count_nonzero(data[:,0])): #instances belong to same class
-            zero_count = (np.count_nonzero(data[:,0]) == 0)
-            nonzero_count = np.count_nonzero(data[:,0])
-            val = 0
-            if (zero_count == 0):
-                val = 0
-            else:
-                val = 1
+        if (np.mean(data[:,0]) == 0 or np.mean(data[:,0]) == 1): #instances belong to same class
             return True, val
         if (node.depth == self.max_depth):
             return True, val
@@ -234,7 +246,7 @@ class DecisionTree:
         is_leaf, label = self._is_terminal(node, data, indices)
         node.label = label # set the label
         if (is_leaf): #split node or not
-            node.isLeaf = True
+            node.isleaf = True
             return
         else:
             #calc gain for each index hypothetically split on, choose one maximizing gain
@@ -242,7 +254,7 @@ class DecisionTree:
             for i in indices:
                 gains.append(self._calc_gain(data,indices[i],self.gain_function))
             max_index = indices[np.argmax(gains)] #split on this index, remove from list
-            indices.pop(max_index) #remove index we split on
+            indices.remove(max_index) #remove index we split on
             # not sure how to set this $
             node._set_info(np.max(gains), len(data))
             node.index_split_on = max_index
@@ -269,8 +281,8 @@ class DecisionTree:
         '''
         #how to calculate probabilities?
         #gain = gain_function(y=1) - x_i=True * gain_function()
-        nonzero_count = np.count_nonzero(data[:,0])
-        zero_count = np.count_nonzero(data[:,0] == 0)
+        nonzero_count = len(data[data[:,0] == 1])
+        zero_count = len(data[data[:,0] == 0])
         # if (nonzero_count > zero_count):
         #     val = 1
         # else:
