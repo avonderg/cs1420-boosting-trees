@@ -160,7 +160,7 @@ class DecisionTree:
                 #     node.label = 0
 
                 loss_after = self.loss(validation_data)
-                if (loss_before < loss_after): # if pruning did not minimize loss
+                if (loss_before <= loss_after): # if pruning did not minimize loss
                     node.left = left_node
                     node.right = right_node
                     node.isleaf = False

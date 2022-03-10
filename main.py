@@ -43,39 +43,43 @@ def explore_dataset(filename, class_name):
     #      (c) Print average training loss (pruned)
     #      (d) Print average test loss (pruned)
     decision_tree_ent = DecisionTree(data=train_data, validation_data=None, gain_function=node_score_entropy)
-    print(decision_tree_ent.loss(train_data)) # average training loss
-    print(decision_tree_ent.loss(test_data))
+    print("entropy non pruned train", decision_tree_ent.loss(train_data)) # average training loss
+    print("entropy non pruned test", decision_tree_ent.loss(test_data))
 
     p_decision_tree_ent = DecisionTree(data=train_data, validation_data=validation_data, gain_function=node_score_entropy)
-    print(p_decision_tree_ent.loss(train_data)) # average training loss
-    print(p_decision_tree_ent.loss(test_data))
+    print("entropy pruned train", p_decision_tree_ent.loss(train_data)) # average training loss
+    print("entropy pruned test", p_decision_tree_ent.loss(test_data))
 
     decision_tree_train = DecisionTree(data=train_data, validation_data=None, gain_function=node_score_error)
-    print(decision_tree_train.loss(train_data)) # average training loss
-    print(decision_tree_train.loss(test_data))
+    print("training error non pruned train", decision_tree_train.loss(train_data)) # average training loss
+    print("training error non pruned test", decision_tree_train.loss(test_data))
 
     p_decision_tree_train = DecisionTree(data=train_data, validation_data=validation_data, gain_function=node_score_error)
-    print(p_decision_tree_train.loss(train_data)) # average training loss
-    print(p_decision_tree_train.loss(test_data))
+    print("training error pruned train", p_decision_tree_train.loss(train_data)) # average training loss
+    print("training error pruned test", p_decision_tree_train.loss(test_data))
 
     decision_tree_gini = DecisionTree(data=train_data, validation_data=None, gain_function=node_score_gini)
-    print(decision_tree_gini.loss(train_data)) # average training loss
-    print(decision_tree_gini.loss(test_data))
+    print("gini non pruned train", decision_tree_gini.loss(train_data)) # average training loss
+    print("gini non pruned test", decision_tree_gini.loss(test_data))
 
     p_decision_tree_gini = DecisionTree(data=train_data, validation_data=validation_data, gain_function=node_score_gini)
-    print(p_decision_tree_gini.loss(train_data)) # average training loss
-    print(p_decision_tree_gini.loss(test_data))
+    print("gini pruned train", p_decision_tree_gini.loss(train_data)) # average training loss
+    print("gini pruned test", p_decision_tree_gini.loss(test_data))
 
 
     # TODO: Feel free to print or plot anything you like here. Just comment
     # make sure to comment it out, or put it in a function that isn't called
     # by default when you hand in your code!
-    figure,axes = plt.subplots(1,3)
-    entropy_graph = loss_plot(axes[0],"entropy error", decision_tree_ent,  p_decision_tree_ent, train_data, test_data)
-    train_graph = loss_plot(axes[1],"train gain", decision_tree_train,  p_decision_tree_train, train_data, test_data)
-    gini_graph = loss_plot(axes[2],"gini gain", decision_tree_gini,  p_decision_tree_gini, train_data, test_data)
-    plt.savefig("hw6_plots.png")
-    plt.show()
+    # figure,axes = plt.subplots(1,3)
+
+    # entropy_graph = loss_plot(axes[0],"entropy gain", decision_tree_ent,  p_decision_tree_ent, train_data, test_data)
+    # train_graph = loss_plot(axes[1],"train error", decision_tree_train,  p_decision_tree_train, train_data, test_data)
+    # gini_graph = loss_plot(axes[2],"gini gain", decision_tree_gini,  p_decision_tree_gini, train_data, test_data)
+    
+    # # print("entropy", decision_tree_ent[5],decision_tree_ent[10], "train", decision_tree_train[5], decision_tree_train[10], "gini", decision_tree_gini[5],  decision_tree_gini[10])
+
+    # plt.savefig("hw6_plots.png")
+    # plt.show()
 
 #for project report
 def plot_loss(filename, class_name):
@@ -90,9 +94,10 @@ def plot_loss(filename, class_name):
         training_loss.append(decision_tree.loss(train_data))
     
     plt.plot(max_depths,training_loss)
-    plt.xlabel('depth')
-    plt.xlabel('training set loss')
-    plt.title('figure 2')
+    plt.xlabel('max depth')
+    plt.ylabel('training set loss')
+    plt.title('maximum depth vs training loss')
+    plt.show()
 
 
 
