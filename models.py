@@ -305,7 +305,7 @@ class DecisionTree:
         gain_right = gain_function(p_split_right)
 
         # gain = gain_nonzero - (gain_left * (len(left_data)/len(data))) + gain_right*(len(right_data)/len(data))
-        gain = gain_nonzero - (gain_left * float(len(left_data))/len(data) + gain_right*float(len(right_data))/len(data))
+        gain = gain_nonzero - (float(len(left_data))/len(data) * gain_left + float(len(right_data))/len(data) * gain_right)
         return gain    
 
     def print_tree(self):
