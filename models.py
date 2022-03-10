@@ -295,17 +295,17 @@ class DecisionTree:
         mask2 = data[:,split_index] == 1 #mask to use on original dataset
         right_data = data[mask2] #data for right child node
 
-        nonzero_count_left = np.count_nonzero(left_data[:,0])
-        nonzero_count_right = np.count_nonzero(right_data[:,0])
-
-        p_split_left = nonzero_count_left / len(data)
-        p_split_right = nonzero_count_right / len(data)
+   
+        nonzero_count = np.mean(data[:,0])
+        p_split_left = np.mean(left_data[:,0])
+        p_split_right = np.mean(right_data[:,0])
         
         gain_nonzero = gain_function(p_one)
         gain_left = gain_function(p_split_left)
         gain_right = gain_function(p_split_right)
 
-        gain = gain_nonzero - (gain_left * (len(left_data)/len(data))) + gain_right*(len(right_data)/len(data))
+        # gain = gain_nonzero - (gain_left * (len(left_data)/len(data))) + gain_right*(len(right_data)/len(data))
+        gain = gain_nonzero - (gain_left * float(len(left_data))/len(data) + gain_right*float(len(right_data))/len(data))
         return gain    
 
     def print_tree(self):

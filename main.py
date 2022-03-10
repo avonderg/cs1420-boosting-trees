@@ -70,8 +70,12 @@ def explore_dataset(filename, class_name):
     # TODO: Feel free to print or plot anything you like here. Just comment
     # make sure to comment it out, or put it in a function that isn't called
     # by default when you hand in your code!
-
-    
+    figure,axes = plt.subplots(1,3)
+    entropy_graph = loss_plot(axes[0],"entropy error", decision_tree_ent,  p_decision_tree_ent, train_data, test_data)
+    train_graph = loss_plot(axes[1],"train gain", decision_tree_train,  p_decision_tree_train, train_data, test_data)
+    gini_graph = loss_plot(axes[2],"gini gain", decision_tree_gini,  p_decision_tree_gini, train_data, test_data)
+    plt.savefig("hw6_plots.png")
+    plt.show()
 
 
 
