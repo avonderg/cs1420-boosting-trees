@@ -252,7 +252,7 @@ class DecisionTree:
             #calc gain for each index hypothetically split on, choose one maximizing gain
             gains = []
             for i in indices:
-                gains.append(self._calc_gain(data,indices[i],self.gain_function))
+                gains.append(self._calc_gain(data,i,self.gain_function))
             max_index = indices[np.argmax(gains)] #split on this index, remove from list
             indices.remove(max_index) #remove index we split on
             # not sure how to set this $
